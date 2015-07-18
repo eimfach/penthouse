@@ -37,11 +37,11 @@ function buildError(msg, problemToken, args) {
 }
 
 // Parses the arguments passed in
-// @returns { width, height, url, css }
+// @returns { width, height, forceInclude, url, css }
 // throws an error on wrong options or parsing error
 function parseOptions(argsOriginal) {
     var args = argsOriginal.slice(0),
-        validOptions = ['--width', '--height'],
+        validOptions = ['--width', '--height', '--forceInclude'],
         parsed = {},
         val,
         len = args.length,
@@ -50,7 +50,7 @@ function parseOptions(argsOriginal) {
 
     if (len < 2) buildError('Not enough arguments, ', args);
 
-    while (args.length > 2 && args[0].match(/^(--width|--height)$/)) {
+    while (args.length > 2 && args[0].match(/^(--width|--height|--forceInclude)$/)) {
         optIndex = validOptions.indexOf(args[0]);
         if (optIndex === -1) buildError('Logic/Parsing error ', args[0], args);
 
@@ -58,8 +58,14 @@ function parseOptions(argsOriginal) {
         option = validOptions[optIndex].slice(2);
         val = args[1];
 
-        parsed[option] = parseInt(val, 10);
-        if (isNaN(parsed[option])) buildError('Parsing error when parsing ', val, args);
+        // hacky hacky hacky!!
+        if (optIndex < 2) {
+          parsed[option] = parseInt(val, 10);
+          if (isNaN(parsed[option])) buildError('Parsing error when parsing ', val, args);
+        } else {
+          // evil! don't assume is array
+          parsed[option] = val.split(',');
+        }
 
         // remove the two parsed arguments from the list
         args = args.slice(2);
@@ -347,7 +353,7 @@ function getCriticalPathCss(options) {
 			// sandboxed environments - no outside references
 			// arguments and return value must be primitives
 			// @see http://phantomjs.org/api/webpage/method/evaluate.html
-			page.evaluate(function sandboxed(css) {
+			page.evaluate(function sandboxed(css, forceInclude) {
 				var h = window.innerHeight,
 					renderWaitTime = 100, //ms TODO: user specifiable through options object
 					finished = false,
@@ -471,7 +477,7 @@ function getCriticalPathCss(options) {
 
 							//some selectors can't be matched on page.
 							//In these cases we test a slightly modified selectors instead, temp.
-							var temp = sel;
+							var temp = sel.trim();
 
 							if (sel.indexOf(':') > -1) {
 								//handle special case selectors, the ones that contain a semi colon (:)
@@ -497,6 +503,15 @@ function getCriticalPathCss(options) {
 							}
 
 							if (!forceRemoveNestedRule) {
+								// handle forceInclude - keep all matching selectors
+								if (forceInclude && forceInclude.some(function(selector){
+									return selector === temp;
+								})) {
+									currIndex = css.indexOf(sel, currIndex) + sel.length;
+									selectorsKept++;
+									continue;
+								}
+
 								//now we have a selector to test, first grab any matching elements
 								var el;
 								try {
@@ -561,7 +576,7 @@ function getCriticalPathCss(options) {
 				//	it doesn't deserve to be in critical path.
 				setTimeout(processCssRules, renderWaitTime);
 
-			}, options.css);
+			}, options.css, options.forceInclude);
 		}
 	});
 }
