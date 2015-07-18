@@ -37,6 +37,8 @@ phantomjs penthouse.js http://mySite.com/page2 allStyles.css > page2-critical-st
 ```
 --width <width>      The viewport width in pixels. Defaults to 1300
 --height <height>    The viewport height in pixels. Defaults to 900
+--forceInclude <selectors>
+                     Comma separated string of selectors that won't be removed even if not in critical viewport
 ```
 
 ##### HTTPS
@@ -65,8 +67,9 @@ var penthouse = require('penthouse'),
 penthouse({
     url : 'http://google.com',
     css : path.join(__basedir + 'static/main.css'),
-    width : 1300,   // viewport width
-    height : 900   // viewport height
+    width : 1300,   // critical viewport width
+    height : 900,   // critical viewport height
+    forceInclude : [ '.array', '.of', 'select', '.ors']
 }, function(err, criticalCss) {
     console.log(criticalCss);
 });
