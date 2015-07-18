@@ -218,9 +218,26 @@ describe('penthouse functionality tests', function () {
             } catch (ex) {
                 done(ex);
             }
-
         });
     });
+
+    it('should force include specified selectors', function (done) {
+      var forceIncludeCssFilePath = path.join(__dirname, 'static-server', 'forceInclude.css');
+
+      penthouse({
+        url: path.join(__dirname, 'static-server', 'page1.html'),
+        css: forceIncludeCssFilePath,
+        forceInclude: [ '.myLoggedInSelectorRemainsEvenThoughNotFoundOnPage' ]
+      }, function (err, result) {
+        try {
+          result.trim().should.not.equal('');
+          done();
+        } catch (ex) {
+          done(ex);
+        }
+      });
+    });
+
 
     /* non core (non breaking) functionality tests */
     it('should remove empty rules', function (done) {
