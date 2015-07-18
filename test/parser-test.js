@@ -36,6 +36,19 @@ describe('options parsing ', function() {
         });
     });
 
+    it('should handle forceInclude argument', function() {
+        var options = parse([
+          '--forceInclude', '.forceSelector,.loggedInStuff',
+          'http://hw.no', 'main.css'
+        ]);
+
+        expect(options).to.eql({
+            url : 'http://hw.no',
+            css : 'main.css',
+            forceInclude : ['.forceSelector', '.loggedInStuff']
+        });
+    });
+
     it('should throw error on invalid values', function() {
         expect(function() {
             parse(['--width', 'a100', 'http://hw.no', 'main.css' ]);
