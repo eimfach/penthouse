@@ -1,6 +1,6 @@
 var penthouse = require('../lib/'),
     chai = require('chai'),
-    should = chai.should(),// extends Object.prototype (so ignore unused warnings)
+    should = chai.should(), // extends Object.prototype (so ignore unused warnings)
     css = require('css'),
     fs = require('fs'),
     read = fs.readFileSync,
@@ -92,7 +92,6 @@ describe('penthouse functionality tests', function () {
             } catch (ex) {
                 done(ex);
             }
-
         });
     });
 
@@ -117,7 +116,6 @@ describe('penthouse functionality tests', function () {
             } catch (ex) {
                 done(ex);
             }
-
         });
     });
 
@@ -141,7 +139,6 @@ describe('penthouse functionality tests', function () {
             } catch (ex) {
                 done(ex);
             }
-
         });
     });
 
@@ -161,7 +158,6 @@ describe('penthouse functionality tests', function () {
             } catch (ex) {
                 done(ex);
             }
-
         });
     });
 
@@ -184,7 +180,6 @@ describe('penthouse functionality tests', function () {
             } catch (ex) {
                 done(ex);
             }
-
         });
     });
 
@@ -204,7 +199,6 @@ describe('penthouse functionality tests', function () {
             } catch (ex) {
                 done(ex);
             }
-
         });
     });
 
@@ -242,7 +236,6 @@ describe('penthouse functionality tests', function () {
             } catch (ex) {
                 done(ex);
             }
-
         });
     });
 
@@ -261,9 +254,7 @@ describe('penthouse functionality tests', function () {
         } catch (ex) {
             done(ex);
         }
-
     });
-
 
     it('should surface parsing errors to the end user', function (done) {
         penthouse({
